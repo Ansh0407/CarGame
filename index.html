@@ -111,6 +111,37 @@
             document.addEventListener('keydown', keyDown);
             document.addEventListener('keyup', keyUp);
 
+            // Variables to track touch positions
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchEndX = 0;
+            let touchEndY = 0;
+
+            gameArea.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            });
+
+            gameArea.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                touchEndX = e.touches[0].clientX;
+                touchEndY = e.touches[0].clientY;
+                let car = document.querySelector('.myCar');
+                let road = gameArea.getBoundingClientRect();
+                let deltaX = touchEndX - touchStartX;
+                let deltaY = touchEndY - touchStartY;
+                player.x += deltaX * 0.5;  // Adjust the multiplier as needed for sensitivity
+                player.y += deltaY * 0.5    ;
+                if (player.x < 0) player.x = 0;
+                if (player.x > (road.width - car.offsetWidth)) player.x = road.width - car.offsetWidth;
+                if (player.y < road.top + 150) player.y = road.top + 150;
+                if (player.y > road.bottom - car.offsetHeight) player.y = road.bottom - car.offsetHeight;
+                car.style.left = player.x + "px";
+                car.style.top = player.y + "px";
+                touchStartX = touchEndX;
+                touchStartY = touchEndY;
+            });
+
             function keyDown(e) {
                 e.preventDefault();
                 keys[e.key] = true;
